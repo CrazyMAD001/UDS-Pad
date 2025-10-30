@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">uds-pad</string>
+    <string name="title_activity_main">uds-pad</string>
+    <string name="package_name">uds.pad</string>
+    <string name="custom_url_scheme">uds.pad</string>
+</resources>
