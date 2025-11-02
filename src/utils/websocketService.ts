@@ -14,8 +14,7 @@
  * ws.connect()
  * ws.send({ type: 'hello' })
  */
-import { toastController } from '@ionic/vue'
-import messageService from './messageService'
+import messageService from '../../../../local/uds-pad/src/utils/messageService'
 type WSEvent = 'open' | 'close' | 'error' | 'message' | 'reconnect' | 'connecting'
 
 type Handler<T = any> = (payload?: T) => void
@@ -25,17 +24,16 @@ export interface WebSocketOptions {
   json?: boolean // 发送/接收是否以 JSON 处理（默认 true）
   autoConnect?: boolean // 构造后是否自动 connect（默认 true）
   reconnect?: boolean // 断开后是否自动重连（默认 true）
-  maxReconnectAttempts?: number // 最大重连次数（默认 Infinity）
-  reconnectInterval?: number // 初始重连间隔 ms（默认 1000）
-  reconnectDecay?: number // 重连退避因子（默认 1.5）
-  heartbeatInterval?: number // 心跳发送间隔 ms（0 表示关闭，默认 15000）
-  heartbeatTimeout?: number // 心跳检测超时 ms（默认 5000）
-  heartbeatMessage?: any // 发送的心跳消息（会根据 json 自动 stringify）
-  heartbeatReply?: any // 心跳回复的匹配内容（可为 function | value），默认 'pong'
+  maxReconnectAttempts: number // 最大重连次数（默认 Infinity）
+  reconnectInterval: number // 初始重连间隔 ms（默认 1000）
+  reconnectDecay: number // 重连退避因子（默认 1.5）
+  heartbeatInterval: number // 心跳发送间隔 ms（0 表示关闭，默认 15000）
+  heartbeatTimeout: number // 心跳检测超时 ms（默认 5000）
+  heartbeatMessage: any // 发送的心跳消息（会根据 json 自动 stringify）
+  heartbeatReply: any // 心跳回复的匹配内容（可为 function | value），默认 'pong'
 }
 
-const DEFAULTS: Required<WebSocketOptions> = {
-  protocols: '',
+const DEFAULTS: WebSocketOptions = {
   json: true,
   autoConnect: false,
   reconnect: true,
@@ -50,7 +48,7 @@ const DEFAULTS: Required<WebSocketOptions> = {
 
 export default class WebSocketService<Recv = any, Send = any> {
   private url: string
-  private opts: Required<WebSocketOptions>
+  private opts: WebSocketOptions
   private ws?: WebSocket
   private reconnectAttempts = 0
   private reconnectTimer?: number
@@ -79,6 +77,7 @@ export default class WebSocketService<Recv = any, Send = any> {
       return
     this.emit('connecting')
     try {
+      console.log('Connecting to WebSocket:', this.url)
       this.ws = this.opts.protocols
         ? new WebSocket(this.url, this.opts.protocols)
         : new WebSocket(this.url)
@@ -93,7 +92,7 @@ export default class WebSocketService<Recv = any, Send = any> {
 
       this.emit('open', ev)
       this.flushQueue()
-      this.startHeartbeat()
+      // this.startHeartbeat()
 
       messageService.success('WebSocket 连接成功!')
     }
@@ -193,7 +192,7 @@ export default class WebSocketService<Recv = any, Send = any> {
   }
 
   private tryReconnect() {
-    if (this.reconnectAttempts >= this.opts.maxReconnectAttempts) return
+    if (this.reconnectAttempts >= this.opts?.maxReconnectAttempts) return
     this.reconnectAttempts++
     const delay = Math.floor(
       this.opts.reconnectInterval * Math.pow(this.opts.reconnectDecay, this.reconnectAttempts - 1)
