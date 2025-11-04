@@ -17,25 +17,53 @@
       </ion-header>
 
       <div id="container">
-        <strong class="capitalize">{{ $route.params.id }}</strong>
-        <p>Explore <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+        <ion-grid>
+          <ion-row class="aic">
+            <ion-col size="auto">
+              <ion-label class="form-label-80">TCU 工作时间</ion-label>
+            </ion-col>
+            <ion-col size="6">
+              <ion-input label="测试" label-placement="floating" fill="outline"></ion-input>
+            </ion-col>
+            <ion-col>
+              <ion-button> 读取 </ion-button>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="aic">
+            <ion-col size="auto">
+              <ion-label class="form-label-80">里程</ion-label>
+            </ion-col>
+            <ion-col size="6">
+              <ion-input label="测试" label-placement="floating" fill="outline"></ion-input>
+            </ion-col>
+            <ion-col>
+              <ion-button> 读取 </ion-button>
+              <ion-button color="success"> 写入 </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
       </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+import {
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonMenuButton,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+  IonLabel,
+  IonInput
+} from '@ionic/vue'
 </script>
 
 <style scoped>
 #container {
-  text-align: center;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
 }
 
 #container strong {

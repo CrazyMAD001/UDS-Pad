@@ -17,14 +17,18 @@
     "@capacitor/android": "7.4.4",
     "@capacitor/app": "7.1.0",
     "@capacitor/core": "7.4.4",
+    "@capacitor/filesystem": "^7.1.4",
     "@capacitor/haptics": "7.0.2",
     "@capacitor/keyboard": "7.0.3",
+    "@capacitor/preferences": "^7.0.2",
     "@capacitor/status-bar": "7.0.3",
     "@ionic/vue": "^8.0.0",
     "@ionic/vue-router": "^8.0.0",
     "ionicons": "^7.0.0",
+    "vconsole": "^3.15.1",
     "vue": "^3.3.0",
-    "vue-router": "^4.2.0"
+    "vue-router": "^4.2.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@capacitor/cli": "7.4.4",

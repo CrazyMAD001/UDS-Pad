@@ -1,2 +1,29 @@
 /* For information on how to create your own theme, please see:
 http://ionicframework.com/docs/theming/ */
+/*  */
+.df {
+  display: flex;
+}
+.dfc {
+  display: flex;
+  flex-direction: column;
+}
+.aic {
+  align-items: center;
+}
+.jcc {
+  justify-content: center;
+}
+.form-label-80 {
+  display: inline-block;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  width: 8.5rem;
+  text-align: right;
+  &::after {
+    content: ':';
+    width: 0.2rem;
+    display: inline-block;
+    margin-left: 0.1rem;
+  }
+}

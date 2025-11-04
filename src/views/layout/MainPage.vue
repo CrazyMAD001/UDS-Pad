@@ -3,34 +3,44 @@
   时间：2025年11月02日 22:04:34
 -->
 <template>
-  <ion-split-pane content-id="main-content">
-    <ion-menu content-id="main-content" type="overlay">
-      <ion-content>
-        <ion-list id="inbox-list">
-          <ion-menu-toggle :auto-hide="false" v-for="(p, i) in appPages" :key="i">
-            <ion-item
-              @click="selectedIndex = i"
-              router-direction="root"
-              :router-link="p.url"
-              lines="none"
-              :detail="false"
-              class="hydrated"
-              :class="{ selected: selectedIndex === i }"
-            >
-              <ion-icon aria-hidden="true" slot="start" :ios="p.iosIcon" :md="p.mdIcon"></ion-icon>
-              <ion-label>{{ p.title }}</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-        </ion-list>
-      </ion-content>
-    </ion-menu>
-    <!-- 自定义侧边栏菜单组件 -->
-    <ion-router-outlet id="main-content"></ion-router-outlet>
-  </ion-split-pane>
+  <ion-page>
+    <ion-split-pane content-id="main-content">
+      <ion-menu content-id="main-content" type="overlay">
+        <ion-content>
+          <ion-list id="inbox-list">
+            <ion-menu-toggle :auto-hide="false" v-for="(p, i) in menus" :key="i">
+              <ion-item
+                @click="selectedIndex = i"
+                router-direction="root"
+                :router-link="p.url"
+                lines="none"
+                :detail="false"
+                class="hydrated"
+                :class="{ selected: selectedIndex === i }"
+              >
+                <ion-icon
+                  aria-hidden="true"
+                  slot="start"
+                  :ios="p.iosIcon"
+                  :md="p.mdIcon"
+                ></ion-icon>
+                <ion-label>{{ p.title }}</ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+          </ion-list>
+          <span>{{ configData }}</span>
+        </ion-content>
+      </ion-menu>
+
+      <!-- 自定义侧边栏菜单组件 -->
+      <ion-router-outlet id="main-content"></ion-router-outlet>
+    </ion-split-pane>
+  </ion-page>
 </template>
 
 <script setup lang="ts">
 import {
+  IonPage,
   IonSplitPane,
   IonRouterOutlet,
   IonMenu,
@@ -39,7 +49,9 @@ import {
   IonLabel,
   IonList,
   IonIcon,
-  IonItem
+  IonItem,
+  onIonViewWillEnter,
+  onIonViewDidEnter
 } from '@ionic/vue'
 import {
   archiveOutline,
@@ -51,33 +63,66 @@ import {
   paperPlaneOutline,
   paperPlaneSharp
 } from 'ionicons/icons'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { getRaw } from '@/store/useConfig'
+const configData = ref<any>(null)
+onIonViewDidEnter(async () => {
+  const data = await getRaw('configFile')
 
+  configData.value = JSON.parse(data as string)
+})
 const selectedIndex = ref(0)
+const menus = computed(() => {
+  if (configData.value?.length === 4) {
+    return appPages1
+  } else {
+    return appPages
+  }
+})
 const appPages = [
   {
-    title: '网络请求',
+    title: '网络测试',
     url: '/main/networkTest',
     iosIcon: mailOutline,
     mdIcon: mailSharp
   },
   {
     title: '组件测试',
-    url: '/main/folder/Outbox',
+    url: '/main/folder/组件测试',
     iosIcon: paperPlaneOutline,
     mdIcon: paperPlaneSharp
   },
   {
     title: ' 参数读取 ',
-    url: '/main/folder/Favorites',
+    url: '/main/folder/参数读取',
     iosIcon: heartOutline,
     mdIcon: heartSharp
   },
   {
     title: ' 协议读取',
-    url: '/main/folder/Archived',
+    url: '/main/folder/协议读取',
     iosIcon: archiveOutline,
     mdIcon: archiveSharp
+  }
+]
+const appPages1 = [
+  {
+    title: '网络测试',
+    url: '/main/networkTest',
+    iosIcon: mailOutline,
+    mdIcon: mailSharp
+  },
+  {
+    title: '组件测试',
+    url: '/main/folder/组件测试',
+    iosIcon: paperPlaneOutline,
+    mdIcon: paperPlaneSharp
+  },
+  {
+    title: ' 位置读取 ',
+    url: '/main/folder/参数读取',
+    iosIcon: heartOutline,
+    mdIcon: heartSharp
   }
 ]
 const path = window.location.pathname.split('folder/')[1]

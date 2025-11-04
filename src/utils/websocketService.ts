@@ -14,26 +14,25 @@
  * ws.connect()
  * ws.send({ type: 'hello' })
  */
-import messageService from '../../../../local/uds-pad/src/utils/messageService'
+import messageService from './messageService'
 type WSEvent = 'open' | 'close' | 'error' | 'message' | 'reconnect' | 'connecting'
 
 type Handler<T = any> = (payload?: T) => void
 
 export interface WebSocketOptions {
-  protocols?: string | string[]
   json?: boolean // 发送/接收是否以 JSON 处理（默认 true）
   autoConnect?: boolean // 构造后是否自动 connect（默认 true）
   reconnect?: boolean // 断开后是否自动重连（默认 true）
-  maxReconnectAttempts: number // 最大重连次数（默认 Infinity）
-  reconnectInterval: number // 初始重连间隔 ms（默认 1000）
-  reconnectDecay: number // 重连退避因子（默认 1.5）
-  heartbeatInterval: number // 心跳发送间隔 ms（0 表示关闭，默认 15000）
-  heartbeatTimeout: number // 心跳检测超时 ms（默认 5000）
-  heartbeatMessage: any // 发送的心跳消息（会根据 json 自动 stringify）
-  heartbeatReply: any // 心跳回复的匹配内容（可为 function | value），默认 'pong'
+  maxReconnectAttempts?: number // 最大重连次数（默认 Infinity）
+  reconnectInterval?: number // 初始重连间隔 ms（默认 1000）
+  reconnectDecay?: number // 重连退避因子（默认 1.5）
+  heartbeatInterval?: number // 心跳发送间隔 ms（0 表示关闭，默认 15000）
+  heartbeatTimeout?: number // 心跳检测超时 ms（默认 5000）
+  heartbeatMessage?: any // 发送的心跳消息（会根据 json 自动 stringify）
+  heartbeatReply?: any // 心跳回复的匹配内容（可为 function | value），默认 'pong'
 }
 
-const DEFAULTS: WebSocketOptions = {
+const DEFAULTS: Required<WebSocketOptions> = {
   json: true,
   autoConnect: false,
   reconnect: true,
@@ -48,7 +47,7 @@ const DEFAULTS: WebSocketOptions = {
 
 export default class WebSocketService<Recv = any, Send = any> {
   private url: string
-  private opts: WebSocketOptions
+  private opts: Required<WebSocketOptions>
   private ws?: WebSocket
   private reconnectAttempts = 0
   private reconnectTimer?: number
@@ -78,9 +77,7 @@ export default class WebSocketService<Recv = any, Send = any> {
     this.emit('connecting')
     try {
       console.log('Connecting to WebSocket:', this.url)
-      this.ws = this.opts.protocols
-        ? new WebSocket(this.url, this.opts.protocols)
-        : new WebSocket(this.url)
+      this.ws = new WebSocket(this.url)
     } catch (err) {
       this.emit('error', err)
       messageService.error('WebSocket 连接失败: ' + (err as Error).message)
@@ -255,7 +252,7 @@ export default class WebSocketService<Recv = any, Send = any> {
     if (!this.opts.json) return raw
     try {
       if (typeof raw === 'string') return JSON.parse(raw)
-      // Blob / ArrayBuffer handling: try to convert to text sync via FileReader is async; return raw
+
       return raw
     } catch {
       return raw
